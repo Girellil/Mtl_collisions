@@ -1,0 +1,2 @@
+# Ignore Mongo DB password
+db_credentials.py
