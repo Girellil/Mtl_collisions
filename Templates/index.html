@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Montreal Collisions</title>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+<body>
+    <img src="https://github.com/Girellil/Mtl_collisions/blob/main/Templates/images/mtlheader.png?raw=true">
+    
+    <nav class="navigation">
+        <ul>
+            <li><a href="#" id="bHome">Home</a></li>
+            <li><a href="#" id="bCollisionmap">Collision Map</a></li>
+            <li><a href="#" id="bAPI">Our APIs</a></li>
+            <li><a href="#" id="bAbout">About us</a></li>
+        </ul>
+    </nav>
+
+    <div id="outputArea">
+        <div id="homeContent">
+            <h1>Welcome to the City of Montreal's map of road collisions</h1>
+            <h2>Explore the collision's map and insights about the available data.</h2>
+            <div id="homebgimage">
+                <img src="https://i.redd.it/m747yhfd9ie61.jpg">
+            </div>
+        </div>
+        <div id="APIcontent">
+            <h2>Our API and their respective links.</h2>
+            <ul>
+                <li><a href="/api/allcollisions/" target="_blank">Json of all collisions</a></li>
+            </ul>
+            <div id="homebgimage">
+                <img src="https://i.redd.it/m747yhfd9ie61.jpg">
+            </div>
+        </div>
+        <div id="aboutContent">
+            <h1>Our Team</h1>
+            <ul>
+                <li>Lucas Girelli</li>
+            </ul>
+            <h1>Data Sources:</h1>
+            <ul>
+                <li><a href="https://donnees.montreal.ca/dataset/collisions-routieres" target="_blank">City Collisions (French Only)</a></li>
+            </ul>
+            <div id="homebgimage">
+                <img src="https://i.redd.it/m747yhfd9ie61.jpg">
+            </div>
+        </div>
+        <div id="graphics-output"></div>
+    </div>
+    
+    <script src="/static/js/collisions_map.js"></script>
+
+    <script>
+
+        const homeLink = document.getElementById('bHome');
+        const mapLink = document.getElementById('bCollisionmap');
+        const APILink = document.getElementById('bAPI');
+        const AboutLink = document.getElementById('bAbout');
+        const homeText = document.getElementById('homeContent');
+        const APIText = document.getElementById('APIcontent');
+        const AboutText = document.getElementById('aboutContent');
+        const graphArea = document.getElementById('graphics-output');
+
+        document.addEventListener('DOMContentLoaded', function() {
+            homeLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                sideMenu.style.display = 'none';
+                homeText.style.display = 'block';
+                APIText.style.display = 'none';
+                AboutText.style.display = 'none';
+                graphArea.style.display = 'none';
+            });
+        });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            mapLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                sideMenu.style.display = 'block';
+                homeText.style.display = 'none';
+                APIText.style.display = 'none';
+                AboutText.style.display = 'none';
+                graphArea.style.display = 'block';
+                graphArea.innerHTML = "";
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            APILink.addEventListener('click', function(event) {
+                event.preventDefault();
+                homeText.style.display = 'none';
+                sideMenu.style.display = 'none';
+                APIText.style.display = 'block';
+                AboutText.style.display = 'none';
+                graphArea.style.display = 'none';
+            });
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            AboutLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                homeText.style.display = 'none';
+                sideMenu.style.display = 'none';
+                APIText.style.display = 'none';
+                AboutText.style.display = 'block';
+                graphArea.style.display = 'none';
+            });
+        });
+
+        sideMenu.style.display = 'none';
+        APIText.style.display = 'none';
+        AboutText.style.display = 'none';
+        graphArea.style.display = 'none';
+
+    </script>
+
+</body>
+</html>
