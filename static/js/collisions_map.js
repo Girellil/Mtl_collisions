@@ -70,10 +70,10 @@ function startGraphML(){
         const div = L.DomUtil.create('div', 'year-control');
         div.innerHTML = `
             <select id="yearSelect">
-                <option value="2018">2018</option>
-                <option value="2019">2019</option>
-                <option value="2020">2020</option>
-                <option value="2021">2021</option>
+                <option value="2018">2021</option>
+                <option value="2019">2020</option>
+                <option value="2020">2019</option>
+                <option value="2021">2018</option>
             </select>
         `;
         return div;
@@ -81,7 +81,7 @@ function startGraphML(){
     yearControl.addTo(myMap);
 
     // Initial year
-    let year = "2018"; 
+    let year = "2021"; 
 
     // Load data for initial year
     let api_url = "/api/allcollisions/" + year;
@@ -98,89 +98,67 @@ function startGraphML(){
 // Function to load data
 function loadData(api_url) {
     getJsonML(api_url).then(function(data){
-        console.log(data);
-        // You can add logic to visualize the data on the map here
+      
+    // Loop through each feature
+    data.forEach(function(collision) {
+
+        // Get place time and magnitud of the earthquake
+        let latitude = collision.LOC_LAT;
+        let longitude = collision.LOC_LONG;
+        let collision_code = collision.NO_SEQ_COLL;
+        let collision_date = collision.DT_ACCDN;
+        let collision_deaths = collision.NB_MORTS;
+        let collision_sev_injuried = collision.NB_BLESSES_GRAVES;
+        let collision_lig_injuried = collision.NB_BLESSES_LEGERS;
+
+        //let time = Date(collision.NO_SEQ_COLL);
+
+        // Call get color to set fillcolor based on Depth
+        // Colors are tones of RED input as RGB on the function below
+        //let red = getCircleColor(depth);
+
+        // Create Circles + Bind POP-UP with relevant info of the EQ.
+        L.circle([latitude, longitude], {
+            color: 'rgb(' + 255 + ', 0, 0)',
+            fillColor: 'rgb(' + 255 + ', 0, 0)',
+            fillOpacity: 0.5,
+            radius: 5,
+            weight: 1
+        }).bindPopup(`<h2>${collision_code}</h2> <hr>
+            <h3>Date: ${collision_date}</h3> <hr>
+            <h3>Deaths: ${collision_deaths}</h3> <hr>
+            <h3>Injuried (Severe): ${collision_sev_injuried}</h3> <hr>
+            <h3>Injuried (minor): ${collision_lig_injuried}</h3> <hr>
+            `).addTo(myMap);
+        //bindPopup(`<h2>${place}</h2> <hr> <h3>Date: ${time}</h3> <hr> <h3>Magnitude: ${mag}, Depth: ${depth}</h3>`).addTo(myMap);
+
+    });
+
+    // Setup legend.
+    // let legend = L.control({ position: "bottomright" });
+    // legend.onAdd = function () {
+    //     let div = L.DomUtil.create('div', 'info legend'),
+    //     grades = colorLabels,
+    //     colors = colorScales,
+    //     labels = [];
+
+    // // Legend title
+    // div.innerHTML = '<h1>Earthquake Depth</h1>'
+    
+    // // Loop through lables intervals to generate colored square for each + Label Name
+    // for (let i = 0; i < grades.length; i++) {
+    //     // Add rectangle filled with respective color
+    //     div.innerHTML +=
+    //         '<span style="background-color:' + colors[i] + ';width:35px;height:25px;display:inline-block;margin-right:5px;"></span>' +
+    //         grades[i] + '<br>';
+    // }
+    // //Formatting legend with a white Background and rounding corners
+    // div.style.backgroundColor = "white";
+    // div.style.borderRadius = "10px";
+    // return div;
+    // };
+    
+    // Adding the legend to the map
+    // legend.addTo(myMap);
     });
 }
-
-
-//Function to update graphics
-// function generateGraphicML(){
-
-//     //Select page elements
-//     let menuNoClusters = d3.select("#ddClusters");
-//     let menuYear = d3.select("#ddYear");
-
-//     //Get current values at the moment selected
-//     let noClusters = menuNoClusters.property("value");
-//     let year = menuYear.property("value");
-
-//     api_url = "/api/v1.0/program_cluster/" + noClusters + "/" + year;
-
-//     //Loop through all items(years) of the json
-//     getJsonML(api_url).then(function(data){
-
-//         // Load inertia graph
-//         let inertiaImageArea = d3.select("#leftColumn2");
-//         inertiaImageArea.html('');
-//         inertiaImageArea.append("img").attr("src", `https://github.com/aayushgambhir2023/Bootcamp-Project4/blob/Lucas/ML_modules/programs_cluster/inertias/elbow_${year}_plot.png?raw=true`)
-//         .style("width", "100%");
-
-//         let progNames = data.map(item => item.Program);
-//         let progRevs = data.map(item => item.rev);
-//         let progExps = data.map(item => item.exp);
-//         let progClusters = data.map(item => item.cluster);
-
-//         //Start Line Graph Values
-//         // Graph info
-//         let traceLine = [{
-//             x: progExps,
-//             y: progRevs,
-//             xaxis: {
-//                 title: "Expenses",
-//                 tickmode: "array", 
-//             },
-//             yaxis: {
-//                 title: "Revenue",
-//                 zeroline: false 
-//             },
-//             mode: 'markers',
-//             marker: {
-//               size: 13,
-//               color: progClusters
-//             },
-//             text: progNames,
-//             hovertemplate: '%{text}<br>Revenue: %{y}<br>Expenses: %{x}<br>Cluster: %{marker.color}',
-//             name: ''
-//           }];
-
-//         // Graph Layout
-//         let layoutLine = {
-//             title: "Clusters of Programs in " + year,
-
-//             plot_bgcolor: "#f7f7f7",
-//             paper_bgcolor: "#f7f7f7",
-//             margin: {
-//                 t: 50,
-//                 l: 50,
-//                 r: 50,
-//                 b: 50
-//             },
-//             //width: 1555,
-//             height: 500,
-//             xaxis: {
-//                 showticklabels: false,
-//                 title: "Expenses"
-//             },
-//             yaxis: {
-//                 showticklabels: false,
-//                 title: "Revenue"
-//             }
-//         };
-
-//         // Plot line graph
-//         Plotly.newPlot("rightColumn", traceLine, layoutLine);
-    
-//     });
-
-// }
