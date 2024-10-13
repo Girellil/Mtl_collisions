@@ -1,11 +1,11 @@
-//Select your menu ID
+// Select your menu ID
 let selMenu = "bCollisionmap";
 let myMap;
 
 // create getJsonML function to retrieve response
-// function getJsonML(url){
-//      return d3.json(url);
-// }
+function getJsonML(url){
+     return d3.json(url);
+}
 
 // Event Listener to your main function
 document.addEventListener('DOMContentLoaded', function() {
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 });
 
-//Initial Graph Function
+// Initial Graph Function
 function startGraphML(){
 
     // Clear Output content
@@ -33,7 +33,7 @@ function startGraphML(){
     AboutText.style("display", "none");
     graphArea.style("display", "block");
 
-    //Select D3 Area, clear Content and adjust side-by side view
+    // Select D3 Area, clear Content and adjust side-by-side view
     graphArea.html("");
 
     // Avoid double init map
@@ -46,13 +46,63 @@ function startGraphML(){
         zoom: 11
     });
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    // Define map layers
+    let sketchLayer = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-    }).addTo(myMap);
+    });
 
-    console.log("end-function")
-          
+    let satelliteLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EGP, and the GIS User Community'
+    });
+
+    // Add layer control
+    L.control.layers({
+        "Sketch": sketchLayer,
+        "Satellite": satelliteLayer
+    }, {}, { collapsed: false }).addTo(myMap);
+
+    // Set the initial layer
+    sketchLayer.addTo(myMap);
+
+    // Add year filter toggle
+    const yearControl = L.control({ position: 'topright' });
+    yearControl.onAdd = function (map) {
+        const div = L.DomUtil.create('div', 'year-control');
+        div.innerHTML = `
+            <select id="yearSelect">
+                <option value="2018">2018</option>
+                <option value="2019">2019</option>
+                <option value="2020">2020</option>
+                <option value="2021">2021</option>
+            </select>
+        `;
+        return div;
+    };
+    yearControl.addTo(myMap);
+
+    // Initial year
+    let year = "2018"; 
+
+    // Load data for initial year
+    let api_url = "/api/allcollisions/" + year;
+    loadData(api_url);
+
+    // Event listener for year selection
+    document.getElementById('yearSelect').addEventListener('change', function(event) {
+        year = event.target.value;
+        api_url = "/api/allcollisions/" + year;
+        loadData(api_url);
+    });
 }
+
+// Function to load data
+function loadData(api_url) {
+    getJsonML(api_url).then(function(data){
+        console.log(data);
+        // You can add logic to visualize the data on the map here
+    });
+}
+
 
 //Function to update graphics
 // function generateGraphicML(){

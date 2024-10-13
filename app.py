@@ -16,9 +16,6 @@ from db_credentials import mongo_pass
 client = MongoClient("mongodb+srv://lucasagirelli:" + mongo_pass + "@girellil.nqz2prr.mongodb.net/")
 db = client['collisions_db']
 
-collection = db["mtl_collisions"]
-
-
 ############################# WEBAPP APIs  ###############################
 #============================HomePage Start===============================
 @app.route("/")
@@ -28,8 +25,10 @@ def welcome():
 
 #============================API-Full-Collection========================
 
-@app.route('/api/allcollisions/')
-def apiallcollisions():
+@app.route('/api/allcollisions/<year>')
+def apiallcollisions(year):
+
+    collection = db["mtlcollisions_df_filtered_" + year]
     data = list(collection.find())
     
     # Convert ObjectId to string in each document
